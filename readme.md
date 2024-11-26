@@ -1,194 +1,94 @@
-# Dokumentasi API Testing Interface
+# Service API Documentation
 
-## link website
+## Deskripsi
 
-https://beautiful-sprite-c55999.netlify.app/
+API ini menyediakan informasi layanan yang ada di aplikasi penyedia jasa layanan berupa pijat, pembantu rumah tangga, dan tukang kebun dengan waktu minimal 1 jam
 
-## Gambaran Umum
+## Link Dokumentasi API
 
-API Testing Interface adalah alat berbasis web yang dirancang untuk membantu pengembang dalam menguji dan berinteraksi dengan endpoint API RESTful. Antarmuka ini menyediakan cara yang mudah digunakan untuk menguji autentikasi, mengelola layanan, dan memvisualisasikan respons API.
+https://beautiful-sprite-c55999.netlify.app
 
-## Fitur
+## Kredensial Pengujian
 
-- Autentikasi Pengguna (Daftar/Masuk)
-- Manajemen Layanan
-- Visualisasi Respons Secara Real-time
-- Pengelolaan Token JWT
-- Dukungan Parameter Opsional
-- Endpoint Khusus Admin
+### Akun Pengguna
 
-## Instalasi
+- **Email:** `example@email.com`
+- **Password:** `password123`
+- **Peran:** User (Pengguna Biasa)
 
-### Prasyarat
+### Akun Admin
 
-- Browser web modern
-- Akses internet (untuk sumber daya CDN)
+- **Email:** `admin@email.com`
+- **Password:** `admin123`
+- **Peran:** Admin
 
-### Cara Pemasangan
-
-1. Unduh file HTML ke komputer lokal Anda
-2. Buka file di browser web Anda
-   - Klik dua kali file atau
-   - Seret dan lepas ke jendela browser Anda
-
-### Konfigurasi
-
-URL dasar API dikonfigurasi ke `https://farisaja.pythonanywhere.com`. Untuk mengubahnya:
-
-1. Temukan baris berikut di bagian script:
-
-```javascript
-const BASE_URL = 'https://farisaja.pythonanywhere.com'
-```
-
-2. Ganti dengan endpoint API yang Anda inginkan
-
-## Panduan Penggunaan
+## Endpoint Utama
 
 ### Autentikasi
 
-#### Pendaftaran
+#### Registrasi
 
-1. Buka bagian "Authentication"
-2. Isi formulir pendaftaran:
-   - Masukkan email
-   - Pilih kata sandi
-3. Klik tombol "Register"
-4. Respons akan menunjukkan status pendaftaran Anda
+- **Method:** POST
+- **Endpoint:** `/register`
+- **Deskripsi:** Membuat akun pengguna baru
+- **Body Parameter:**
+  - `email` (wajib): Alamat email valid
+  - `password` (wajib): Kata sandi pengguna
 
 #### Login
 
-1. Di bagian "Authentication", temukan formulir login
-2. Masukkan kredensial Anda:
-   - Email
-   - Kata sandi
-3. Klik "Login"
-4. Setelah berhasil login:
-   - Status autentikasi akan berubah menjadi "Authenticated"
-   - Token JWT akan disimpan secara otomatis
-   - Token akan digunakan untuk permintaan selanjutnya
+- **Method:** POST
+- **Endpoint:** `/login`
+- **Deskripsi:** Otentikasi pengguna dan mendapatkan token akses
+- **Body Parameter:**
+  - `email` (wajib): Alamat email terdaftar
+  - `password` (wajib): Kata sandi yang sesuai
 
 ### Layanan
 
-#### Melihat Semua Layanan
+#### Daftar Layanan
 
-1. Buka bagian "Services"
-2. Filter opsional:
-   - Service Type: Masukkan kategori layanan tertentu
-   - Date: Masukkan tanggal dalam format YYYY-MM-DD
-3. Klik "Get Services"
-4. Hasil akan ditampilkan dalam format JSON yang rapi
+- **Method:** GET
+- **Endpoint:** `/services`
+- **Deskripsi:** Mendapatkan daftar layanan
+- **Header:**
+  - `Authorization: Bearer {token}`
+- **Query Parameter Opsional:**
+  - `service_type`: Filter berdasarkan tipe layanan
+  - `date`: Filter berdasarkan tanggal (format: YYYY-MM-DD)
 
-#### Mendapatkan Layanan berdasarkan ID
+#### Detail Layanan
 
-1. Di bagian Services, temukan formulir "Get Service by ID"
-2. Masukkan:
-   - Service ID (wajib)
-   - Date (opsional, format YYYY-MM-DD)
-3. Klik "Get Service"
-4. Lihat informasi layanan secara detail
+- **Method:** GET
+- **Endpoint:** `/services/{id}`
+- **Deskripsi:** Mendapatkan detail layanan spesifik
+- **Header:**
+  - `Authorization: Bearer {token}`
+- **Query Parameter Opsional:**
+  - `date`: Filter tanggal spesifik (format: YYYY-MM-DD)
 
-#### Menambah Layanan Baru (Khusus Admin)
+#### Tambah Layanan (Admin Only)
 
-1. Temukan bagian "Add Service"
-2. Modifikasi template JSON yang disediakan atau masukkan data layanan baru
-3. Struktur JSON yang diperlukan:
+- **Method:** POST
+- **Endpoint:** `/services`
+- **Deskripsi:** Menambahkan layanan baru (hanya admin)
+- **Header:**
+  - `Authorization: Bearer {token}`
+  - `Content-Type: application/json`
+- **Body:** Objek layanan dalam format JSON
 
-```json
-{
-  "id": number,
-  "type": string,
-  "provider": {
-    "id": number,
-    "name": string,
-    "image": string,
-    "rating": number,
-    "reviews": number
-  },
-  "rate": number,
-  "availability": [
-    {
-      "date": "YYYY-MM-DD",
-      "slots": [
-        {
-          "start": "HH:MM",
-          "end": "HH:MM"
-        }
-      ]
-    }
-  ]
-}
-```
+## Kode Status HTTP
 
-4. Klik "Add Service"
-5. Periksa respons untuk konfirmasi
+- `200`: Berhasil
+- `201`: Berhasil dibuat
+- `400`: Permintaan tidak valid
+- `401`: Tidak terotorisasi
+- `403`: Akses ditolak
+- `404`: Tidak ditemukan
+- `500`: Kesalahan server internal
 
-## Format Respons
+## Otentikasi
 
-Semua respons API ditampilkan dalam wadah yang diformat menunjukkan:
-
-- Kode Status HTTP
-- Isi Respons (JSON terformat)
-- Pesan Sukses/Error
-
-## Penanganan Error
-
-Antarmuka memberikan pesan error yang jelas untuk:
-
-- Kegagalan autentikasi
-- Field yang wajib diisi kosong
-- Format input tidak valid
-- Masalah koneksi server
-- Upaya akses tidak sah
-
-## Catatan Keamanan
-
-- Token disimpan dalam memori dan dihapus saat halaman di-refresh
-- Semua data sensitif ditransmisikan melalui HTTPS
-- Field kata sandi dimasking dengan benar
-- Header otorisasi otomatis disertakan untuk permintaan terotentikasi
-
-## Kompatibilitas Browser
-
-Telah diuji dan kompatibel dengan:
-
-- Google Chrome (terbaru)
-- Mozilla Firefox (terbaru)
-- Microsoft Edge (terbaru)
-- Safari (terbaru)
-
-## Pemecahan Masalah
-
-### Masalah Umum
-
-1. Pesan "Not authenticated"
-
-   - Solusi: Login kembali untuk mendapatkan token baru
-
-2. Error "Failed to fetch"
-
-   - Periksa koneksi internet Anda
-   - Pastikan server API berjalan
-   - Konfirmasi BASE_URL sudah benar
-
-3. Format JSON tidak valid
-   - Pastikan data layanan Anda mengikuti struktur yang diperlukan
-   - Periksa koma atau kurung yang hilang
-
-### Mendapatkan Bantuan
-
-Jika Anda mengalami masalah:
-
-1. Periksa konsol browser untuk pesan error detail
-2. Verifikasi semua field yang diperlukan telah diisi dengan benar
-3. Pastikan Anda menggunakan kredensial yang benar
-4. Hubungi administrator API untuk masalah yang berkelanjutan
-
-## Kontribusi
-
-Untuk berkontribusi pada antarmuka ini:
-
-1. Fork repositori
-2. Buat perubahan Anda
-3. Uji secara menyeluruh
-4. Kirim pull request
+- Gunakan token Bearer yang diperoleh dari endpoint login
+- Sertakan token di header `Authorization` untuk endpoint yang memerlukan otentikasi
+- Token berlaku untuk periode tertentu
